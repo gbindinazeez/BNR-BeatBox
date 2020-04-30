@@ -2,14 +2,16 @@ package com.bignerdranch.android.beatbox
 
 import android.os.Bundle
 import android.view.ViewGroup
+import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bignerdranch.android.beatbox.databinding.ActivityMainBinding
 import com.bignerdranch.android.beatbox.databinding.ListItemSoundBinding
+import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), SeekBar.OnSeekBarChangeListener {
 
     private lateinit var beatBox: BeatBox
 
@@ -19,6 +21,9 @@ class MainActivity : AppCompatActivity() {
 
         val binding: ActivityMainBinding =
             DataBindingUtil.setContentView(this, R.layout.activity_main)
+
+        binding.seekBar.setOnSeekBarChangeListener(this)
+
 
         binding.recyclerView.apply {
             layoutManager = GridLayoutManager(context,3)
@@ -59,5 +64,39 @@ class MainActivity : AppCompatActivity() {
         val sound = sounds[position]
         holder.bind(sound)
         }
+    }
+
+    /**
+     * Notification that the progress level has changed. Clients can use the fromUser parameter
+     * to distinguish user-initiated changes from those that occurred programmatically.
+     *
+     * @param seekBar The SeekBar whose progress has changed
+     * @param progress The current progress level. This will be in the range min..max where min
+     * and max were set by [ProgressBar.setMin] and
+     * [ProgressBar.setMax], respectively. (The default values for
+     * min is 0 and max is 100.)
+     * @param fromUser True if the progress change was initiated by the user.
+     */
+    override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+        playback_speed_text.text = getString(R.string.playback_speed, seekBar?.progress)
+        beatBox.speed = progress
+    }
+
+    /**
+     * Notification that the user has started a touch gesture. Clients may want to use this
+     * to disable advancing the seekbar.
+     * @param seekBar The SeekBar in which the touch gesture began
+     */
+    override fun onStartTrackingTouch(seekBar: SeekBar?) {
+        beatBox.speed
+    }
+
+    /**
+     * Notification that the user has finished a touch gesture. Clients may want to use this
+     * to re-enable advancing the seekbar.
+     * @param seekBar The SeekBar in which the touch gesture began
+     */
+    override fun onStopTrackingTouch(seekBar: SeekBar?) {
+        beatBox.speed
     }
 }

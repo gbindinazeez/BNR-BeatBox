@@ -14,13 +14,14 @@ class BeatBox(private val assets: AssetManager) {
 
     val sounds: List<Sound>
     private val soundPool = SoundPool.Builder().setMaxStreams(MAX_SOUNDS).build()
+    var speed = 0
     init {
         sounds = loadSounds()
     }
 
     fun play(sound: Sound){
         sound.soundId?.let {
-            soundPool.play(it,1.0f,1.0f,1, 0,1.0f)
+            soundPool.play(it,1.0f,1.0f,1, 0,speed/50f)
         }
     }
 
